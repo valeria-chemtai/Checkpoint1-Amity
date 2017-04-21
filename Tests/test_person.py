@@ -1,13 +1,19 @@
-from unittest import TestCase, mock
-from Models import person
+from unittest import TestCase
+from Models.person import Person, Fellow, Staff
 
 
-class PersonTest(TestCase):
-    def test_add_person(self):
-        fake_input = mock.Mock(side_effect=["A", "B", "C", ""])
-        with mock.patch("builtins.input", fake_input):
-            new_person = person.Person.add_person()
-        self.assertEqual(new_person, ["A"])
+class FellowTest(TestCase):
+    def setUp(self):
+        # call Fellow(Person) as self.fellow before running tests in this class
+        self.fellow = Fellow()
 
-if __name__ == '__main__':
-	unittest.main()
+    def tearDown(self):
+        del self.fellow  # after every test delete self.fellow
+
+    # check that class Fellow is an instance/subclass of class Person
+    def test_fellow_is_instance_of_person(self):
+        self.assertTrue(self.fellow, Person)
+
+
+if __name__ == "__main__":
+    unittest.main()
