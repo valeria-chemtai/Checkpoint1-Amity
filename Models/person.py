@@ -10,7 +10,15 @@ class Person(object):
         self.role = role
         self.wants_accomodation = wants_accomodation
 
-    def add_person():
-        new_person = ((input("Enter Firstname Secondname role wants_accomodation separated by space  ")).split())
 
-        return new_person
+"""Model for Fellow"""
+
+
+class Fellow(Person):
+    pass
+
+"""Model for Staff"""
+
+
+class Staff(Person):
+    pass
