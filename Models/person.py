@@ -18,12 +18,14 @@ class Fellow(Person):
 
     def add_person():
         # Prompt for Fellow details
-        new_person = ((input("Enter Firstname Secondname role wants_accomodation separated by space  ")))
-        return new_person
+        new_fellow = ((input("Enter Firstname Secondname role wants_accomodation separated by space  ")))
+        return new_fellow
 
 
 """Model for Staff"""
 
 
 class Staff(Person):
-    pass
+    def add_person(self):
+        new_staff = ((input("Enter Firstname Secondname role separated by space  ")))
+        return new_staff
