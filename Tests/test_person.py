@@ -23,5 +23,18 @@ class FellowTest(TestCase):
         self.assertEqual(new_person, "OLU JACOBS FELLOW Y")
 
 
+class StaffTest(TestCase):
+    def setUp(self):
+        # call class Staff as self.staff
+        self.staff = Staff()
+
+    def teardown(self):
+        del self.staff
+
+    def test_staff_is_instance_of_person(self):
+        # check if class staff is a subclass of Person
+        self.assertTrue(self.staff, Person)
+
+
 if __name__ == "__main__":
     unittest.main()
