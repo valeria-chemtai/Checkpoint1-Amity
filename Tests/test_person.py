@@ -19,8 +19,8 @@ class FellowTest(TestCase):
         # mocked one object because am calling this function once here.
         fake_input = mock.Mock(side_effect=["OLU JACOBS FELLOW Y", ""])
         with mock.patch("builtins.input", fake_input):
-            new_person = Fellow.add_person()
-        self.assertEqual(new_person, "OLU JACOBS FELLOW Y")
+            new_fellow = Fellow.add_person()
+        self.assertEqual(new_fellow, "OLU JACOBS FELLOW Y")
 
 
 class StaffTest(TestCase):
@@ -34,6 +34,15 @@ class StaffTest(TestCase):
     def test_staff_is_instance_of_person(self):
         # check if class staff is a subclass of Person
         self.assertTrue(self.staff, Person)
+
+
+    def test_add_person(self):
+        # Test user can input staff details i.e name and role
+        # mocking inputs
+        fake_input = mock.Mock(side_effect=["DOMINIC WALTERS STAFF", ""])
+        with mock.patch("builtins.input", fake_input):
+            new_staff = Staff.add_person(self)
+        self.assertEqual(new_staff, "DOMINIC WALTERS STAFF")
 
 
 if __name__ == "__main__":
