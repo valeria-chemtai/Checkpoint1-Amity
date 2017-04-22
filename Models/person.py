@@ -4,7 +4,7 @@
 
 class Person(object):
     # Default constructor.
-    def __init__(self, name, person_id, role, wants_accomodation):
+    def __init__(self, name=None, person_id=None, role=None, wants_accomodation=None):
         self.name = name
         self.id = id
         self.role = role
@@ -15,7 +15,12 @@ class Person(object):
 
 
 class Fellow(Person):
-    pass
+
+    def add_person():
+        # Prompt for Fellow details
+        new_person = ((input("Enter Firstname Secondname role wants_accomodation separated by space  ")))
+        return new_person
+
 
 """Model for Staff"""
 
