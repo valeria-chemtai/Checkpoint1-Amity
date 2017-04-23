@@ -16,7 +16,8 @@ class TestRoom(TestCase):
         fake_input = mock.Mock(side_effect=["room1", "room2", "room3", ""])
         with mock.patch("builtins.input", fake_input):
             new_room = Room.create_room(self)
-        self.assertEqual(new_room, ["room1", "room2", "room3", ""])
+
+        self.assertEqual(new_room, ["room1", "room2", "room3"])
 
 
 if __name__ == "__main__":

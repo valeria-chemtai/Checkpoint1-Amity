@@ -35,7 +35,6 @@ class StaffTest(TestCase):
         # check if class staff is a subclass of Person
         self.assertTrue(self.staff, Person)
 
-
     def test_add_person(self):
         # Test user can input staff details i.e name and role
         # mocking inputs
