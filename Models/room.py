@@ -4,7 +4,12 @@
 
 
 class Room(object):
-    pass
+    def __init__(self, name=None, room_id=None):
+        self.name = name
+        self.room_id = room_id
+
+    def create_room(self):
+    	pass
 
 # class office a subclass of Room
 
