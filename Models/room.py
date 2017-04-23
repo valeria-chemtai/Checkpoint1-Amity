@@ -24,7 +24,8 @@ class Room(object):
 
 
 class Office(Room):
-    pass
+    def __init__(self, name=None, room_id=None):
+        Room.__init__(self, name, room_id)
 
 # class LivingSpace a subclass of Room
 
