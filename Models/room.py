@@ -9,6 +9,10 @@ class Room(object):
         self.room_id = room_id
 
     def create_room(self):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 055a3862bc55c66c93a09e58ae89cfb49d08177e
         # prompt for room names
         rooms_available = []
         while True:
@@ -19,7 +23,10 @@ class Room(object):
             rooms_available.append(new_room)
         return rooms_available
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 055a3862bc55c66c93a09e58ae89cfb49d08177e
 # class office a subclass of Room
 
 
