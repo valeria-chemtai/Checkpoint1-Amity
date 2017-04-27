@@ -4,7 +4,8 @@
 
 class Person(object):
     # Default constructor.
-    def __init__(self, *name, person_id=None, role=None, wants_accomodation=None):
+    def __init__(self, name=" ", person_id=None,
+                 role=None, wants_accomodation=None):
         self.name = name
         self.id = person_id
         self.role = role
@@ -15,7 +16,8 @@ class Person(object):
 
 
 class Fellow(Person):
-    def __init__(self, *name, person_id=None, role="FELLOW", wants_accomodation="Y"):
+    def __init__(self, name=" ", person_id=None,
+                 role="FELLOW", wants_accomodation="Y"):
         Person.__init__(self, name, person_id, wants_accomodation)
         self.name = name
         self.person_id = person_id
@@ -27,7 +29,8 @@ class Fellow(Person):
 
 
 class Staff(Person):
-    def __init__(self, *name, person_id=None, role="STAFF", wants_accomodation="N"):
+    def __init__(self, name=" ", person_id=None,
+                 role="STAFF", wants_accomodation="N"):
         Person.__init__(self, name, person_id, wants_accomodation)
         self.name = name
         self.person_id = person_id
