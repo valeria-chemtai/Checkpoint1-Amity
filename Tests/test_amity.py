@@ -63,6 +63,17 @@ class TestAmity(TestCase):
             allocation_change = self.amity.reallocate_person()
         self.assertEqual(allocation_change, fake)
 
+    def test_office_capacity(self):
+        """Test the office capacity does not exceed 6"""
+        number_of_occupants = len(self.office.occupants)
+        self.assertEqual(number_of_occupants, 6)
+        self.assertLessEqual(number_of_occupants, 6)
+
+    def test_living_space_capacity(self):
+        """Test the living_space capacity does not exceed 4"""
+        number_of_occupants = len(self.living_space.occupants)
+        self.assertEqual(number_of_occupants, 4)
+
 
 if __name__ == "__main__":
     unittest.main()
