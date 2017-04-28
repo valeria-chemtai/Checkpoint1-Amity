@@ -67,12 +67,38 @@ class TestAmity(TestCase):
         """Test the office capacity does not exceed 6"""
         number_of_occupants = len(self.office.occupants)
         self.assertEqual(number_of_occupants, 6)
-        self.assertLessEqual(number_of_occupants, 6)
+        # self.assertLessEqual(number_of_occupants, 6)
 
     def test_living_space_capacity(self):
         """Test the living_space capacity does not exceed 4"""
         number_of_occupants = len(self.living_space.occupants)
         self.assertEqual(number_of_occupants, 4)
+
+    def test_loading_from_txt(self):
+        """test if data loaded from text file reflects"""
+        data = ["OLUWAFEMI SULE FELLOW Y",
+                "DOMINIC WALTERS STAFF",
+                "SIMON PATTERSON FELLOW Y",
+                "MARI LAWRENCE FELLOW Y"]
+        fake_input = mock.Mock(side_effect=data)
+        with mock.patch("builtins.input", fake_input):
+            new = self.amity.load_people()
+            total = self.person.total.append(new)
+        self.assertEqual(total, data)
+        self.assertGreaterEqual(total, data)
+
+    def test_no_duplicate_room_allocation(self):
+        # check if person is in the allocations list, if so do not allocate
+
+        self.assertIn(self.amity.load_people(), self.room.occupants,
+                      msg="Person already assigned room")
+        message = self.amity.load_people()
+        self.assertEqual(message, "Can not Allocate Person More than Once")
+
+    def test_room_only_created_once(self):
+        # available_rooms = self.room.room_list
+        message = self.amity.create_room()
+        self.assertEqual(message, "Room Already Created")
 
 
 if __name__ == "__main__":
