@@ -1,12 +1,15 @@
+
 """ Person model """
 # Class Person
 
 
 class Person(object):
     # Default constructor.
-    def __init__(self, name=None, person_id=None, role=None, wants_accomodation=None):
+    total = []
+    def __init__(self, name=" ", person_id=None,
+                 role=None, wants_accomodation=None):
         self.name = name
-        self.id = id
+        self.id = person_id
         self.role = role
         self.wants_accomodation = wants_accomodation
 
@@ -15,17 +18,23 @@ class Person(object):
 
 
 class Fellow(Person):
-
-    def add_person():
-        # Prompt for Fellow details
-        new_fellow = ((input("Enter Firstname Secondname role wants_accomodation separated by space  ")))
-        return new_fellow
+    def __init__(self, name=" ", person_id=None,
+                 role="FELLOW", wants_accomodation="Y"):
+        Person.__init__(self, name, person_id, wants_accomodation)
+        self.name = name
+        self.person_id = person_id
+        self.role = "FELLOW"
+        self.wants_accomodation = "Y"
 
 
 """Model for Staff"""
 
 
 class Staff(Person):
-    def add_person(self):
-        new_staff = ((input("Enter Firstname Secondname role separated by space  ")))
-        return new_staff
+    def __init__(self, name=" ", person_id=None,
+                 role="STAFF", wants_accomodation="N"):
+        Person.__init__(self, name, person_id, wants_accomodation)
+        self.name = name
+        self.person_id = person_id
+        self.role = "STAFF"
+        self.wants_accomodation = "N"
