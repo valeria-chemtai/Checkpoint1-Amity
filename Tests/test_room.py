@@ -19,6 +19,30 @@ class TestRoom(TestCase):
 
         self.assertEqual(new_room, ["room1", "room2", "room3"])
 
+    """Test if class Office is instance of Room"""
+
+
+class TestOffice(TestCase):
+    def setUp(self):
+        self.office = Office()
+
+    def tearDown(self):
+        del self.office
+
+    def test_office_is_instance_of_room(self):
+        self.assertTrue(self.office, Room)
+
+
+class TestLivingSpace(TestCase):
+    def setUp(self):
+        self.living = LivingSpace()
+
+    def tearDown(self):
+        del self.living
+
+    def test_livingspace_is_instance_of_room(self):
+        self.assertTrue(self.living, Room)
+
 
 if __name__ == "__main__":
     unittest.main()

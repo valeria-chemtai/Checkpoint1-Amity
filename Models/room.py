@@ -10,7 +10,7 @@ class Room(object):
                  purpose=None, occupants=[]):
         self.name = name
         self.room_id = room_id
-        self.purpose = purpose
+        self.purpose =purpose
         self.occupants = occupants
 
 

@@ -6,6 +6,7 @@
 class Person(object):
     # Default constructor.
     total = []
+
     def __init__(self, name=" ", person_id=None,
                  role=None, wants_accomodation=None):
         self.name = name
