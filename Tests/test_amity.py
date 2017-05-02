@@ -44,14 +44,16 @@ class TestAmity(TestCase):
     def test_add_person(self):
         """Test a person/people are succesfully added"""
         # mock inputs as below
-        fake_input = mock.Mock(side_effect=["OLUWAFEMI SULE FELLOW Y",
-                                            "DOMINIC WALTERS STAFF",
-                                            "TANA LOPEZ FELLOW Y", " "])
+        fake_input = mock.Mock(side_effect=[["OLUWAFEMI", "SULE", "FELLOW",
+                                             "Y"],
+                                            ["DOMINIC", "WALTERS", "STAFF"],
+                                            ["TANA", "LOPEZ", "FELLOW", "Y"],
+                                            " "])
         with mock.patch("builtins.input", fake_input):
             persons = self.amity.add_person()
-        self.assertEqual(persons, ["OLUWAFEMI SULE FELLOW Y",
-                                   "DOMINIC WALTERS STAFF",
-                                   "TANA LOPEZ FELLOW Y"])
+        self.assertEqual(persons, [["OLUWAFEMI", "SULE", "FELLOW", "Y"],
+                                   ["DOMINIC", "WALTERS", "STAFF"],
+                                   ["TANA", "LOPEZ", "FELLOW", "Y"]])
 
     def test_reallocate_person(self):
         """Test a person is rellocated succesfully"""

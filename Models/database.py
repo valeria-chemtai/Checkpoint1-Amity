@@ -9,7 +9,7 @@ Base = declarative_base()
 """ create table called Andelans"""
 
 
-class PeopleTable(Base):
+class People(Base):
     __tablename__ = "Andelans"
     Name = Column(String(250), nullable=False)
     person_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -20,7 +20,7 @@ class PeopleTable(Base):
 """create table called Amity"""
 
 
-class RoomsTable(Base):
+class Rooms(Base):
     __tablename__ = "Amity"
     Name = Column(String(250), nullable=False)
     room_id = Column(Integer, primary_key=True, autoincrement=True)
