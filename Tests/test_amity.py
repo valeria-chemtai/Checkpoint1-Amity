@@ -41,6 +41,8 @@ class TestAmity(TestCase):
 
     def test_add_person(self):
         """Test a person/people are succesfully added"""
+        self.amity.create_room("Accra", "OFFICE")
+        self.amity.create_room("Unono", "LIVINGSPACE")
         self.assertEqual(self.amity.add_person("Dominic", "Walters", "STAFF",
                                                "N"), "Staff Added")
         self.assertEqual(self.amity.add_person("Oluwafemi", "Sule", "FELLOW",
@@ -59,6 +61,19 @@ class TestAmity(TestCase):
         """Test valid person name"""
         self.assertEqual(self.amity.add_person(123, 123, "STAFF", "N"),
                          "Invalid Person Name")
+
+    def test_reallocate_person_not_in_amity(self):
+        """Test reallocate a person not in Amity yet"""
+        self.amity.create_room("Accra", "OFFICE")
+        self.assertEqual(self.amity.reallocate_person("Rose", "Wambui",
+                                                      "Accra"),
+                         "Add {} to Amity first".format("Rose Wambui"))
+
+    def test_cannot_reallocate_person_to_unavailable_room(self):
+        """Test person can not be reallocated to unavailable room """
+        self.amity.create_room("Accra", "OFFICE")
+        self.amity.add_person("Rose", "Wambui", "STAFF", "N")
+        self.assertEqual(self.amity.reallocate_person("Rose", "Wambui", "Cairo"), "{} is not a room in Amity".format("Cairo"))
 
 
 if __name__ == "__main__":

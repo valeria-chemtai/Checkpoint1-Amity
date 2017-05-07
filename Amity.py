@@ -49,27 +49,26 @@ class Amity(object):
     def add_person(self, first_name, second_name, role, wants_accomodation):
         if (isinstance(first_name, str) and isinstance(second_name, str)):
             person_name = first_name + " " + second_name
-            allocated = [
-                person for person in self.allocated if person_name == person]
-            waiting = [
-                person for person in self.unallocated if person_name == person]
-            if allocated or waiting:
+            allocated = [allocated for allocated in self.allocated if person_name == allocated.person_name]
+            unallocated = [unallocated for unallocated in self.unallocated if person_name == unallocated.person_name]
+            person = allocated or unallocated
+            if person:
                 print("{} Exists in Amity.".format(person_name))
                 return "{} Exists in Amity.".format(person_name)
 
             else:
                 if role == "FELLOW" and wants_accomodation == "N":
                     person = Fellow(person_name, wants_accomodation)
-                    self.allocate_office(person_name)
+                    self.allocate_office(person)
                     return "Fellow Added"
                 elif role == "FELLOW" and wants_accomodation == "Y":
                     person = Fellow(person_name, wants_accomodation)
-                    self.allocate_office(person_name)
+                    self.allocate_office(person)
                     self.allocate_living_space(person_name, wants_accomodation)
                     return "Fellow Added and LIvingSpace Allocated"
                 elif role == "STAFF":
                     person = Staff(person_name)
-                    self.allocate_office(person_name)
+                    self.allocate_office(person)
                     return "Staff Added"
                 else:
                     print("{} is not a valid room type.".format(role))
@@ -88,14 +87,14 @@ class Amity(object):
             if len(office.occupants) < 6:
                 office.occupants.append(person)
                 self.allocated.append(person)
-                print("{} allocated office {}".format(person,
+                print("{} allocated office {}".format(person.person_name,
                                                       office.room_name))
             else:
                 print("Room full")
         else:
             self.unallocated.append(person)
             print("No Office available now, {} placed in waiting list ".
-                  format(person))
+                  format(person.person_name))
 
     def allocate_living_space(self, person, wants_accomodation):
         person = person
@@ -110,22 +109,29 @@ class Amity(object):
         else:
             print(
                 "No living space available now, {} placed in waiting list ".
-                format(person))
+                format(person.person_name))
 
     """ method to reallocate a person to another room """
 
-    def reallocate_person(self, person_name, room_name):
-        allocated = [
-            person for person in self.allocated if person_name == person]
-        unallocated = [
-            person for person in self.unallocated if person_name == person]
-        no_room = not[
-            room for room in self.room_list if room_name == room.room_name]
-        if not allocated and not unallocated:
+    def reallocate_person(self, first_name, second_name, room_name):
+        person_name = first_name + " " + second_name
+        allocated = [allocated for allocated in self.allocated if person_name == allocated.person_name]
+        unallocated = [unallocated for unallocated in self.unallocated if person_name == unallocated.person_name]
+        room = [room for room in self.room_list if room_name == room.room_name]
+        if not allocated or unallocated:
             print("Add {} to Amity first".format(person_name))
-        elif no_room:
+            return "Add {} to Amity first".format(person_name)
+        elif not room:
             print("{} is not a room in Amity".format(room_name))
-        # elif allocated:
+            return "{} is not a room in Amity".format(room_name)
+        elif allocated:
+            new_room = room_name
+            old_room = [room for room in self.room_list if person_name in room.occupants]
+            new_room.occupants.append(person)
+            old_room.occupants.remove(person)
+            print("{} reallocated from {} to {} ".format(person_name, old_room, new_room))
+
+
 
     """ method to add people to rooms from a text file """
 
