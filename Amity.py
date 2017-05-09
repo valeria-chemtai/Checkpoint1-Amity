@@ -49,8 +49,10 @@ class Amity(object):
     def add_person(self, first_name, second_name, role, wants_accomodation):
         if (isinstance(first_name, str) and isinstance(second_name, str)):
             person_name = first_name + " " + second_name
-            allocated = [allocated for allocated in self.allocated if person_name == allocated.person_name]
-            unallocated = [unallocated for unallocated in self.unallocated if person_name == unallocated.person_name]
+            allocated = [allocated for allocated in self.allocated
+                         if person_name == allocated.person_name]
+            unallocated = [unallocated for unallocated in self.unallocated
+                           if person_name == unallocated.person_name]
             person = allocated or unallocated
             if person:
                 print("{} Exists in Amity.".format(person_name))
@@ -81,7 +83,6 @@ class Amity(object):
     office to both staff and fellows"""
 
     def allocate_office(self, person):
-        person = person
         if self.office_list:
             office = random.choice(self.office_list)
             if len(office.occupants) < 6:
@@ -97,7 +98,6 @@ class Amity(object):
                   format(person.person_name))
 
     def allocate_living_space(self, person, wants_accomodation):
-        person = person
         if self.living_space_list:
             living = random.choice(self.living_space_list)
             if len(living.occupants) < 4:
@@ -115,23 +115,46 @@ class Amity(object):
 
     def reallocate_person(self, first_name, second_name, room_name):
         person_name = first_name + " " + second_name
-        allocated = [allocated for allocated in self.allocated if person_name == allocated.person_name]
-        unallocated = [unallocated for unallocated in self.unallocated if person_name == unallocated.person_name]
+        allocated = [allocated for allocated in self.allocated if
+                     person_name == allocated.person_name]
+        unallocated = [unallocated for unallocated in self.unallocated if
+                       person_name == unallocated.person_name]
         room = [room for room in self.room_list if room_name == room.room_name]
-        if not allocated or unallocated:
+        person = allocated or unallocated
+        if not person:
             print("Add {} to Amity first".format(person_name))
             return "Add {} to Amity first".format(person_name)
         elif not room:
             print("{} is not a room in Amity".format(room_name))
             return "{} is not a room in Amity".format(room_name)
-        elif allocated:
-            new_room = room_name
-            old_room = [room for room in self.room_list if person_name in room.occupants]
-            new_room.occupants.append(person)
-            old_room.occupants.remove(person)
-            print("{} reallocated from {} to {} ".format(person_name, old_room, new_room))
 
+        elif [occupant for occupant in room[0].occupants
+                if person_name == occupant.person_name]:
+            print("{} is already in {}".format(person_name, room[0].room_name))
+            return "{} is already in {}".format(person_name, room[0].room_name)
 
+        elif room[0].purpose == "living_space" and person[0].role == "Staff":
+            print("{} is a living space. Staff can only be allocated offices"
+                  .format(room[0].room_name))
+            return "Staff cannot be allocated living space"
+
+        elif (room[0].purpose == "office" and len(room[0].occupants) == 6):
+            print("{} is full.".format(room[0].room_name))
+            return"Room is Full"
+
+        elif (room[0].purpose == "living_space" and len(room[0].occupants) == 4):
+            print("{} is full.".format(room[0].room_name))
+            return"Room is Full"
+
+        else:
+            old_room = [room for room in self.room_list if person[
+                0] in room.occupants]
+            room[0].occupants.append(person[0])
+            old_room[0].occupants.remove(person[0])
+            person[0].old_room = room[0].room_name
+            print("{} was moved from {} to {}".format(
+                person[0].person_name, old_room[0].room_name, room[0].room_name))
+            return "Reallocated Successfully"
 
     """ method to add people to rooms from a text file """
 
@@ -140,27 +163,27 @@ class Amity(object):
 
     """ method to print a list of allocations on screen
      with option to store in a txt file """
-    
+
     def print_allocation(self):
         pass
 
     """ method to print a list of unallocated people in screen
      with option to store in a text file """
-    
+
     def print_unallocated(self):
         pass
 
     """ method to print room name and all people allocated to that room """
-    
+
     def print_room(self):
         pass
 
     """ method to save all data in the app into SQLite database """
-    
+
     def save_state(self):
         pass
 
     """ method to load data from database into the app """
-    
+
     def load_state(self):
         pass

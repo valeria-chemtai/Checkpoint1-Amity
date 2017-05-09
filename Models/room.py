@@ -12,7 +12,7 @@ class Room(object):
         self.room_id = room_id
         self.purpose = purpose
         self.max_capacity = max_capacity
-        self.occupants = occupants
+        self.occupants = []
 
 
 # class office a subclass of Room
