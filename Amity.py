@@ -2,7 +2,7 @@
 the Models Views Controller concept i.e. MVC"""
 import os
 import random
-from sqlalchemy import create_engine, update
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -158,11 +158,11 @@ class Amity(object):
 
         elif unallocated:
             room[0].occupants.append(person[0])
-            print("{} moved from waiting list to {}".format(person[0].person_name, room[0].room_name))
+            print("{} moved from waiting list to {}".format(
+                person[0].person_name, room[0].room_name))
             return "Moved to {}".format(room[0].room_name)
         else:
-            old_room = [room for room in self.room_list if person[
-                0] in room.occupants]
+            old_room = [room for room in self.room_list if person[0] in room.occupants]
             room[0].occupants.append(person[0])
             old_room[0].occupants.remove(person[0])
             person[0].old_room = room[0].room_name
@@ -194,8 +194,20 @@ class Amity(object):
     """ method to print a list of unallocated people in screen
      with option to store in a text file """
 
-    def print_unallocated(self):
-        pass
+    def print_unallocated(self, filename):
+        if len(self.unallocated) == 0:
+            print("No Member in Unallocated")
+            return "No Member in Unallocated"
+        else:
+            for person in self.unallocated:
+                person_name = person.person_name
+                print(person_name)
+        if filename:
+            with open(filename, 'w') as f:
+                f.write(person_name)
+            print("Data Saved to Text File")
+            return "Data Saved to Text File"
+        return "Unallocated Printed"
 
     """ method to print room and all people allocated to that room."""
 
@@ -214,23 +226,23 @@ class Amity(object):
     """ method to save all data in the app into SQLite database """
 
     def save_state(self, database_name):
-        # try:
         for person in self.allocated + self.unallocated:
             rooms_allocated = " "
             for room in self.room_list:
                 if person in room.occupants:
                     rooms_allocated = room.room_name + "  "
-            person = People(Name=person.person_name, Role= person.role, Accomodation=person.wants_accomodation, RoomAllocated=rooms_allocated)
+            person = People(Name=person.person_name, Role=person.role,
+                            Accomodation=person.wants_accomodation,
+                            RoomAllocated=rooms_allocated)
             session.add(person)
         for room in self.room_list:
             people = " "
             for occupant in room.occupants:
                 people += occupant.person_name + "  "
-            room = Rooms(Name=room.room_name, Purpose=room.purpose, Occupants=people)
+            room = Rooms(Name=room.room_name,
+                         Purpose=room.purpose, Occupants=people)
             session.add(room)
         session.commit()
-        # except:
-            # print("Error Saving Data to Database")
 
     """ method to load data from database into the app """
 
@@ -253,4 +265,16 @@ class Amity(object):
                     room.occupants.append(person)
                 self.living_space_list.append(room)
                 self.room_list.append(room)
-
+        for person_name, role, wants_accomodation, rooms_allocated in session.query(People.Name, People.Role, People.Accomodation, People.RoomAllocated):
+            if role == "FELLOW":
+                person = Fellow(person_name)
+                if rooms_allocated:
+                    self.allocated.append(person)
+                else:
+                    self.unallocated.append(person)
+            else:
+                person = Staff(person_name)
+                if rooms_allocated:
+                    self.allocated.append(person)
+                else:
+                    self.unallocated.append(person)
