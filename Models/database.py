@@ -22,9 +22,9 @@ class People(Base):
 
 
 class Rooms(Base):
-    __tablename__ = "Amity"
+    __tablename__ = "Amity Rooms"
     Name = Column(String(250), primary_key=True, nullable=False)
-    room_id = Column(Integer, primary_key=True)
+    # room_id = Column(Integer, primary_key=True)
     # Column for Living Space or Office Space
     Purpose = Column(String(250), nullable=False)
     # Column for Number of occupants in the room

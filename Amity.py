@@ -214,13 +214,43 @@ class Amity(object):
     """ method to save all data in the app into SQLite database """
 
     def save_state(self, database_name):
+        # try:
         for person in self.allocated + self.unallocated:
-            room = [room for room in self.room_list if person in room.occupants]
-            person = People(Name=person.person_name, Role= person.role, Accomodation=person.wants_accomodation, RoomAllocated=room[0].room_name)
+            rooms_allocated = " "
+            for room in self.room_list:
+                if person in room.occupants:
+                    rooms_allocated = room.room_name + "  "
+            person = People(Name=person.person_name, Role= person.role, Accomodation=person.wants_accomodation, RoomAllocated=rooms_allocated)
             session.add(person)
-            session.commit()
+        for room in self.room_list:
+            people = " "
+            for occupant in room.occupants:
+                people += occupant.person_name + "  "
+            room = Rooms(Name=room.room_name, Purpose=room.purpose, Occupants=people)
+            session.add(room)
+        session.commit()
+        # except:
+            # print("Error Saving Data to Database")
 
     """ method to load data from database into the app """
 
-    def load_state(self):
-        pass
+    def load_state(self, database_name):
+        """Load room data"""
+        for room_name, purpose, occupants in session.query(Rooms.Name, Rooms.Purpose, Rooms.Occupants):
+            individuals = occupants.split("  ")
+            individuals.remove("")
+            if purpose == "office":
+                room = Office(room_name)
+                for individual in individuals:
+                    person = Person(individual)
+                    room.occupants.append(person)
+                self.office_list.append(room)
+                self.room_list.append(room)
+            elif purpose == "living_space":
+                room = LivingSpace(room_name)
+                for individual in individuals:
+                    person = Person(individual)
+                    room.occupants.append(person)
+                self.living_space_list.append(room)
+                self.room_list.append(room)
+
