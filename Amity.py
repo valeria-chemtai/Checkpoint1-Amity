@@ -3,7 +3,6 @@ the Models Views Controller concept i.e. MVC"""
 import os
 import random
 
-
 from Models.person import Person, Fellow, Staff
 from Models.room import Room, Office, LivingSpace
 
@@ -66,7 +65,7 @@ class Amity(object):
                 elif role == "FELLOW" and wants_accomodation == "Y":
                     person = Fellow(person_name, wants_accomodation)
                     self.allocate_office(person)
-                    self.allocate_living_space(person_name, wants_accomodation)
+                    self.allocate_living_space(person)
                     return "Fellow Added and LIvingSpace Allocated"
                 elif role == "STAFF":
                     person = Staff(person_name)
@@ -97,7 +96,7 @@ class Amity(object):
             print("No Office available now, {} placed in waiting list ".
                   format(person.person_name))
 
-    def allocate_living_space(self, person, wants_accomodation):
+    def allocate_living_space(self, person):
         if self.living_space_list:
             living = random.choice(self.living_space_list)
             if len(living.occupants) < 4:
@@ -109,7 +108,7 @@ class Amity(object):
         else:
             print(
                 "No living space available now, {} placed in waiting list ".
-                format(person.person_name))
+                format(person))
 
     """ method to reallocate a person to another room """
 
@@ -146,6 +145,10 @@ class Amity(object):
             print("{} is full.".format(room[0].room_name))
             return"Room is Full"
 
+        elif unallocated:
+            room[0].occupants.append(person[0])
+            print("{} moved from waiting list to {}".format(person[0].person_name, room[0].room_name))
+            return "Moved to {}".format(room[0].room_name)
         else:
             old_room = [room for room in self.room_list if person[
                 0] in room.occupants]
@@ -158,13 +161,23 @@ class Amity(object):
 
     """ method to add people to rooms from a text file """
 
-    def load_people(self):
-        pass
+    def load_people(self, filename):
+        try:
+            with open(filename, 'r') as f:
+                people = f.readlines()
+            for person in people:
+                params = person.split()
+                self.add_person(params[0], params[1], params[2], params[3])
+            print("People Successfully Loaded")
+            return "People Successfully Loaded"
+        except FileNotFoundError:
+            print("File not found in the path specified")
+            return "Error. File not found"
 
     """ method to print a list of allocations on screen
      with option to store in a txt file """
 
-    def print_allocation(self):
+    def print_allocations(self, filename):
         pass
 
     """ method to print a list of unallocated people in screen
@@ -175,8 +188,17 @@ class Amity(object):
 
     """ method to print room name and all people allocated to that room """
 
-    def print_room(self):
-        pass
+    def print_room(self, room_name):
+        room = [room for room in self.room_list if room_name == room.room_name]
+        if room:
+            room = room[0]
+            print("{}".format(room.room_name))
+            for person in room.occupants:
+                print(person.person_name)
+            return "Print room successful"
+        else:
+            print("{} does not exist in Amity".format(room_name))
+            return "Room does not exist"
 
     """ method to save all data in the app into SQLite database """
 

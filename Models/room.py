@@ -4,7 +4,6 @@
 
 
 class Room(object):
-    room_list = []
 
     def __init__(self, room_name=" ", room_id=None,
                  purpose=None, max_capacity=None, occupants=[]):
@@ -19,7 +18,6 @@ class Room(object):
 
 
 class Office(Room):
-    office_list = []
 
     def __init__(self, room_name=" ", room_id=None,
                  purpose="office", occupants=[], max_capacity=6):
@@ -36,7 +34,6 @@ class Office(Room):
 
 
 class LivingSpace(Room):
-    living_space_list = []
 
     def __init__(self, room_name=" ", room_id=None,
                  purpose="living_space", occupants=[], max_capacity=4):
