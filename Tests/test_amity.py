@@ -84,6 +84,14 @@ class TestAmity(TestCase):
     self.assertEqual(self.amity.reallocate_person(
         "Rose", "Wambui", "Cairo"), "Reallocated Successfully")
 
+  def test_print_existing_room(self):
+    """Test for printing existing room"""
+    self.amity.create_room("Accra", "OFFICE")
+    self.assertEqual(self.amity.print_room("Accra"), "Print room successful")
+  def test_print_nonexisting_room(self):
+    """Test for printing nonexisting room """
+    self.assertEqual(self.amity.print_room("Accra"), "Room does not exist")
+
 
 if __name__ == "__main__":
   unittest.main()
