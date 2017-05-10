@@ -2,9 +2,20 @@
 the Models Views Controller concept i.e. MVC"""
 import os
 import random
+from sqlalchemy import create_engine, update
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 from Models.person import Person, Fellow, Staff
 from Models.room import Room, Office, LivingSpace
+from Models.database import People, Rooms
+
+"""Initiate link to database for storage and retrival of data"""
+engine = create_engine("sqlite:///Amity_database.db")
+Base = declarative_base()
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
 
 
 class Amity(object):
@@ -172,7 +183,7 @@ class Amity(object):
             return "People Successfully Loaded"
         except FileNotFoundError:
             print("File not found in the path specified")
-            return "Error. File not found"
+            return "File not found"
 
     """ method to print a list of allocations on screen
      with option to store in a txt file """
@@ -186,7 +197,7 @@ class Amity(object):
     def print_unallocated(self):
         pass
 
-    """ method to print room name and all people allocated to that room """
+    """ method to print room and all people allocated to that room."""
 
     def print_room(self, room_name):
         room = [room for room in self.room_list if room_name == room.room_name]
@@ -202,8 +213,12 @@ class Amity(object):
 
     """ method to save all data in the app into SQLite database """
 
-    def save_state(self):
-        pass
+    def save_state(self, database_name):
+        for person in self.allocated + self.unallocated:
+            room = [room for room in self.room_list if person in room.occupants]
+            person = People(Name=person.person_name, Role= person.role, Accomodation=person.wants_accomodation, RoomAllocated=room[0].room_name)
+            session.add(person)
+            session.commit()
 
     """ method to load data from database into the app """
 
