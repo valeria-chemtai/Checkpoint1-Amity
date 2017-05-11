@@ -31,8 +31,8 @@ class TestAmity(TestCase):
   def test_room_only_created_once(self):
     """Test room is only created once"""
     self.amity.create_room("Accra", "OFFICE")
-    self.assertEqual(self.amity.create_room("Accra", "OFFICE"),
-                     "{} Exists in Amity.".format("Accra"))
+    self.assertEqual(self.amity.create_room("ACCRA", "OFFICE"),
+                     "{} Exists in Amity.".format("ACCRA"))
 
   def test_valid_room_names(self):
     """Test valid room name"""
@@ -53,9 +53,9 @@ class TestAmity(TestCase):
 
   def test_add_existing_person(self):
     """Test person is added once"""
-    self.amity.add_person("Angie", "Sule", "STAFF", "N")
-    self.assertEqual(self.amity.add_person("Angie", "Sule", "STAFF", "N"),
-                     "{} Exists in Amity.".format("Angie Sule"))
+    self.amity.add_person("ANGIE", "SULE", "STAFF", "N")
+    self.assertEqual(self.amity.add_person("ANGIE", "SULE", "STAFF", "N"),
+                     "{} Exists in Amity.".format("ANGIE SULE"))
 
   def test_valid_person_name(self):
     """Test valid person name"""
@@ -64,17 +64,17 @@ class TestAmity(TestCase):
 
   def test_reallocate_person_not_in_amity(self):
     """Test reallocate a person not in Amity yet"""
-    self.amity.create_room("Accra", "OFFICE")
-    self.assertEqual(self.amity.reallocate_person("Rose", "Wambui",
-                                                  "Accra"),
-                     "Add {} to Amity first".format("Rose Wambui"))
+    self.amity.create_room("ACCRA", "OFFICE")
+    self.assertEqual(self.amity.reallocate_person("ROSE", "WAMBUI",
+                                                  "ACCRA"),
+                     "Add {} to Amity first".format("ROSE WAMBUI"))
 
   def test_cannot_reallocate_person_to_unavailable_room(self):
     """Test person can not be reallocated to unavailable room """
-    self.amity.create_room("Accra", "OFFICE")
-    self.amity.add_person("Rose", "Wambui", "STAFF", "N")
-    self.assertEqual(self.amity.reallocate_person("Rose", "Wambui", "Cairo"),
-                     "{} is not a room in Amity".format("Cairo"))
+    self.amity.create_room("ACCRA", "OFFICE")
+    self.amity.add_person("ROSE", "WAMBUI", "STAFF", "N")
+    self.assertEqual(self.amity.reallocate_person("ROSE", "WAMBUI", "CAIRO"),
+                     "{} is not a room in Amity".format("CAIRO"))
 
   def test_successful_reallocation(self):
     """Test if person is successfully reallocated"""
@@ -82,7 +82,13 @@ class TestAmity(TestCase):
     self.amity.add_person("Rose", "Wambui", "STAFF", "N")
     self.amity.create_room("Cairo", "OFFICE")
     self.assertEqual(self.amity.reallocate_person(
-        "Rose", "Wambui", "Cairo"), "Reallocated Successfully")
+        "ROSE", "WAMBUI", "CAIRO"), "Reallocated Successfully")
+  def test_reallocates_to_appropriate_room_type(self):
+    """Test person reallocated to room type as current room"""
+    self.amity.create_room("Accra", "OFFICE")
+    self.amity.add_person("Rose", "Wambui", "STAFF", "N")
+    self.amity.create_room("Unono", "LIVINGSPACE")
+    self.assertEqual(self.amity.reallocate_person("ROSE", "WAMBUI", "UNONO"), "Choose Appropriate Room Type")
 
   def test_print_existing_room(self):
     """Test for printing existing room"""
@@ -91,6 +97,14 @@ class TestAmity(TestCase):
   def test_print_nonexisting_room(self):
     """Test for printing nonexisting room """
     self.assertEqual(self.amity.print_room("Accra"), "Room does not exist")
+  def test_print_allocations_to_file(self):
+    """Test that Allocations can be printed to specified file name"""
+    self.amity.create_room("Accra", "OFFICE")
+    self.amity.add_person("Rose", "Wambui", "STAFF", "N")
+    self.assertEqual(self.amity.print_allocations("data.txt"), "Allocations Printed to data.txt")
+  def test_print_allocations_not_done_if_no_rooms(self):
+    """Test that allocations not printed if no rooms available in Amity"""
+    self.assertEqual(self.amity.print_allocations("data.txt"), "No Rooms")
 
 
 if __name__ == "__main__":
