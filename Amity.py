@@ -32,18 +32,18 @@ class Amity(object):
     def create_room(self, room_name, purpose):
         if (isinstance(room_name, str) and isinstance(purpose, str)):
             if [room for room in self.room_list
-                    if room_name == room.room_name]:
+                    if room_name.upper() == room.room_name.upper()]:
                 print("{} Exists in Amity.".format(room_name))
                 return "{} Exists in Amity.".format(room_name)
             else:
                 if purpose == "OFFICE" or purpose == "office":
-                    room = Office(room_name)
+                    room = Office(room_name.upper())
                     self.office_list.append(room)
                     self.room_list.append(room)
                     print("{} {} created".format(room.room_name, room.purpose))
                     return "Room Created"
                 elif purpose == "LIVINGSPACE" or purpose == "livingspace":
-                    room = LivingSpace(room_name)
+                    room = LivingSpace(room_name.upper())
                     self.living_space_list.append(room)
                     self.room_list.append(room)
                     print("{} {} created".format(room.room_name, room.purpose))
@@ -58,27 +58,27 @@ class Amity(object):
 
     def add_person(self, first_name, second_name, role, wants_accomodation):
         if (isinstance(first_name, str) and isinstance(second_name, str)):
-            person_name = first_name + " " + second_name
+            person_name = first_name.upper() + " " + second_name.upper()
             allocated = [allocated for allocated in self.allocated
-                         if person_name == allocated.person_name]
+                         if person_name.upper() == allocated.person_name.upper()]
             unallocated = [unallocated for unallocated in self.unallocated
-                           if person_name == unallocated.person_name]
+                           if person_name.upper() == unallocated.person_name.upper()]
             person = allocated or unallocated
             if person:
                 print("{} Exists in Amity.".format(person_name))
                 return "{} Exists in Amity.".format(person_name)
 
             else:
-                if role == "FELLOW" and wants_accomodation == "N":
+                if role.upper() == "FELLOW" and wants_accomodation == "N":
                     person = Fellow(person_name, wants_accomodation)
                     self.allocate_office(person)
                     return "Fellow Added"
-                elif role == "FELLOW" and wants_accomodation == "Y":
+                elif role.upper() == "FELLOW" and wants_accomodation == "Y":
                     person = Fellow(person_name, wants_accomodation)
                     self.allocate_office(person)
                     self.allocate_living_space(person)
                     return "Fellow Added and LIvingSpace Allocated"
-                elif role == "STAFF":
+                elif role.upper() == "STAFF":
                     person = Staff(person_name)
                     self.allocate_office(person)
                     return "Staff Added"
@@ -212,15 +212,15 @@ class Amity(object):
     """ method to print room and all people allocated to that room."""
 
     def print_room(self, room_name):
-        room = [room for room in self.room_list if room_name == room.room_name]
+        room = [room for room in self.room_list if room_name.upper() == room.room_name.upper()]
         if room:
             room = room[0]
-            print("{}".format(room.room_name))
+            print("{}".format(room.room_name.upper()))
             for person in room.occupants:
                 print(person.person_name)
             return "Print room successful"
         else:
-            print("{} does not exist in Amity".format(room_name))
+            print("{} does not exist in Amity".format(room_name.upper()))
             return "Room does not exist"
 
     """ method to save all data in the app into SQLite database """
@@ -265,6 +265,8 @@ class Amity(object):
                     room.occupants.append(person)
                 self.living_space_list.append(room)
                 self.room_list.append(room)
+
+        """Load People data"""
         for person_name, role, wants_accomodation, rooms_allocated in session.query(People.Name, People.Role, People.Accomodation, People.RoomAllocated):
             if role == "FELLOW":
                 person = Fellow(person_name)
