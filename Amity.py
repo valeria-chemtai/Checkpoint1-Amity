@@ -98,86 +98,105 @@ class Amity(object):
     def allocate_office(self, person):
         """allocate_office is a method used for allocation of
         office to both staff and fellows"""
-        if self.offices:
-            office = random.choice(self.offices)
-            if len(office.occupants) < 6:
+        try:
+            if self.offices:
+                room = [room for room in self.offices if len(
+                    room.occupants) < 6]
+                office = random.choice(room)
                 office.occupants.append(person)
                 self.allocated.append(person)
                 print("{} allocated office {}".format(person.person_name,
                                                       office.room_name))
+                return "Office Allocated"
             else:
-                print("{} Room full".format(office.room_name))
-        else:
+                self.unallocated.append(person)
+                print("No Office available now, {} placed in waiting list ".
+                      format(person.person_name))
+                return "No Office Available"
+        except IndexError:
             self.unallocated.append(person)
             print("No Office available now, {} placed in waiting list ".
                   format(person.person_name))
 
     def allocate_living_space(self, person):
-        if self.living_spaces:
-            living = random.choice(self.living_spaces)
-            if len(living.occupants) < 4:
+        try:
+            if self.living_spaces:
+                room = [room for room in self.living_spaces if len(
+                    room.occupants) < 4]
+                living = random.choice(room)
                 living.occupants.append(person)
                 print("and allocated livingspace {}".format(living.room_name))
             else:
-                print("{} Room Full".format(living.room_name))
+                self.unallocated.append(person)
+                print("No living space now, {} placed in waiting list"
+                      .format(person.person_name))
 
-        else:
+        except IndexError:
             self.unallocated.append(person)
-            print(
-                "No living space available now, {} placed in waiting list ".
-                format(person.person_name))
+            print("No living space available now, {} placed in waiting list "
+                  .format(person.person_name))
 
     def allocate_unallocated_office(self, person):
-        if self.offices:
-            office = random.choice(self.offices)
-            if len(office.occupants) < 6:
+        try:
+            if self.offices:
+                room = [room for room in self.offices if len(
+                    room.occupants) < 6]
+                office = random.choice(room)
                 office.occupants.append(person[0])
                 self.allocated.append(person[0])
                 self.unallocated.remove(person[0])
                 print("{} moved from waiting list to {}".
                       format(person[0].person_name, office.room_name))
-                return "Now Allocated Office"
             else:
-                print("Room Full Try Later")
-                return "Room Full Try Later"
-        else:
+                print("No Offices Available Yet")
+                return "No Offices Available Yet"
+
+        except IndexError:
             print("No Offices Available Yet")
-            return "No Offices Available Yet"
 
     def allocate_unallocated_livingspace(self, person):
-        if self.living_spaces:
-            living = random.choice(self.living_spaces)
-            if len(living.occupants) < 4:
+        try:
+            if self.living_spaces:
+                room = [room for room in self.living_spaces if len(
+                    room.occupants) < 6]
+                living = random.choice(room)
                 living.occupants.append(person[0])
                 self.allocated.append(person[0])
                 self.unallocated.remove(person[0])
-                print("{} moved from waiting list to {}".format(person[0].person_name, living.room_name))
-                return "Fellow Now Allocated LivingSpace"
+                print("{} moved from waiting list to {}".format(
+                    person[0].person_name, living.room_name))
             else:
-                print("Room Full Try Later")
-                return "Room Full Try Later"
-        else:
+                print("No Livingspaces Available Yet")
+                return "No Livingspaces Available Yet"
+
+        except IndexError:
             print("No Livingspaces Available Yet")
 
     def allocate_unallocated(self, first_name, second_name):
         """Method to allocate unallocate members rooms"""
-        person_name = first_name.upper() + " " + second_name.upper()
-        person = [person for person in self.unallocated if
-                  person_name.upper() == person.person_name.upper()]
-        room = [room for room in self.rooms if person[0] in room.occupants]
+        try:
+            person_name = first_name.upper() + " " + second_name.upper()
+            person = [person for person in self.unallocated if
+                      person_name.upper() == person.person_name.upper()]
+            room = [room for room in self.rooms if person[0] in room.occupants]
 
-        if not person:
-            print("{} Not in Unallocated".format(person_name))
-            return "{} Not in Unallocated".format(person_name)
+            if not person:
+                print("{} Not in Unallocated".format(person_name))
+                return "{} Not in Unallocated".format(person_name)
 
-        elif person and room:
-            if room[0].purpose == "office":
-                self.allocate_unallocated_livingspace(person)
-            elif room[0].purpose == "living_space":
+            elif person and room:
+                if room[0].purpose == "office":
+                    self.allocate_unallocated_livingspace(person)
+                    return "Fellow Now Allocated LivingSpace"
+                elif room[0].purpose == "living_space":
+                    self.allocate_unallocated_office(person)
+                    return "Fellow Now Allocated Office"
+
+            else:
                 self.allocate_unallocated_office(person)
-
-        else:
-            self.allocate_unallocated_office(person)
+                return "Member Now Allocated Office"
+        except IndexError:
+            print("Person given not in Unallocated")
 
     def reallocate_person(self, first_name, second_name, room_name):
         """ method to reallocate a person to another room """
@@ -274,9 +293,12 @@ class Amity(object):
             print("No Member in Unallocated")
             return "No Member in Unallocated"
         else:
+            print("\n UNALLOCATED MEMBERS")
+            print("----" * 10)
             for person in self.unallocated:
                 person_name = person.person_name
                 print(person_name)
+            print("----" * 10)
         if filename:
             with open(filename, 'w') as f:
                 f.write(person_name)
@@ -290,9 +312,11 @@ class Amity(object):
                 room.room_name.upper()]
         if room:
             room = room[0]
-            print("{}".format(room.room_name.upper()))
+            print("\n{}'s OCCUPANTS".format(room.room_name.upper()))
+            print("----" * 10)
             for person in room.occupants:
                 print(person.person_name)
+            print("----" * 10)
             return "Print room successful"
         else:
             print("{} does not exist in Amity".format(room_name.upper()))
