@@ -79,10 +79,15 @@ class Amity(object):
                     self.allocate_office(person)
                     self.allocate_living_space(person)
                     return "Fellow Added and LIvingSpace Allocated"
-                elif role.upper() == "STAFF":
+                elif role.upper() == "STAFF" and wants_accomodation == "N":
                     person = Staff(person_name)
                     self.allocate_office(person)
                     return "Staff Added"
+                elif role.upper() == "STAFF" and wants_accomodation == "Y":
+                    person = Staff(person_name)
+                    self.allocate_office(person)
+                    print("Staff Added and Allocated Office Only")
+                    return "Staff Added and Allocated Office Only"
                 else:
                     print("{} is not a valid room type.".format(role))
 
@@ -117,9 +122,62 @@ class Amity(object):
                 print("{} Room Full".format(living.room_name))
 
         else:
+            self.unallocated.append(person)
             print(
                 "No living space available now, {} placed in waiting list ".
                 format(person.person_name))
+
+    def allocate_unallocated_office(self, person):
+        if self.offices:
+            office = random.choice(self.offices)
+            if len(office.occupants) < 6:
+                office.occupants.append(person[0])
+                self.allocated.append(person[0])
+                self.unallocated.remove(person[0])
+                print("{} moved from waiting list to {}".
+                      format(person[0].person_name, office.room_name))
+                return "Now Allocated Office"
+            else:
+                print("Room Full Try Later")
+                return "Room Full Try Later"
+        else:
+            print("No Offices Available Yet")
+            return "No Offices Available Yet"
+
+    def allocate_unallocated_livingspace(self, person):
+        if self.living_spaces:
+            living = random.choice(self.living_spaces)
+            if len(living.occupants) < 4:
+                living.occupants.append(person[0])
+                self.allocated.append(person[0])
+                self.unallocated.remove(person[0])
+                print("{} moved from waiting list to {}".format(person[0].person_name, living.room_name))
+                return "Fellow Now Allocated LivingSpace"
+            else:
+                print("Room Full Try Later")
+                return "Room Full Try Later"
+        else:
+            print("No Livingspaces Available Yet")
+
+    def allocate_unallocated(self, first_name, second_name):
+        """Method to allocate unallocate members rooms"""
+        person_name = first_name.upper() + " " + second_name.upper()
+        person = [person for person in self.unallocated if
+                  person_name.upper() == person.person_name.upper()]
+        room = [room for room in self.rooms if person[0] in room.occupants]
+
+        if not person:
+            print("{} Not in Unallocated".format(person_name))
+            return "{} Not in Unallocated".format(person_name)
+
+        elif person and room:
+            if room[0].purpose == "office":
+                self.allocate_unallocated_livingspace(person)
+            elif room[0].purpose == "living_space":
+                self.allocate_unallocated_office(person)
+
+        else:
+            self.allocate_unallocated_office(person)
 
     def reallocate_person(self, first_name, second_name, room_name):
         """ method to reallocate a person to another room """
@@ -128,11 +186,13 @@ class Amity(object):
                      person_name.upper() == allocated.person_name.upper()]
         unallocated = [unallocated for unallocated in self.unallocated if
                        person_name.upper() == unallocated.person_name.upper()]
-        room = [room for room in self.rooms if room_name.upper() == room.room_name.upper()]
-        person = allocated or unallocated
+        room = [room for room in self.rooms if room_name.upper() ==
+                room.room_name.upper()]
+        person = allocated
         if not person:
             print("Add {} to Amity first".format(person_name))
             return "Add {} to Amity first".format(person_name)
+
         elif not room:
             print("{} is not a room in Amity".format(room_name))
             return "{} is not a room in Amity".format(room_name)
@@ -151,13 +211,9 @@ class Amity(object):
             print("{} is full.".format(room[0].room_name))
             return"Room is Full"
 
-        elif unallocated:
-            room[0].occupants.append(person[0])
-            print("{} moved from waiting list to {}".format(
-                person[0].person_name, room[0].room_name))
-            return "Moved to {}".format(room[0].room_name)
         else:
-            old_room = [room for room in self.rooms if person[0] in room.occupants]
+            old_room = [room for room in self.rooms if person[
+                0] in room.occupants]
             if old_room[0].purpose == room[0].purpose:
                 room[0].occupants.append(person[0])
                 old_room[0].occupants.remove(person[0])
@@ -166,6 +222,7 @@ class Amity(object):
                     person[0].person_name, old_room[0].room_name,
                     room[0].room_name))
                 return "Reallocated Successfully"
+
             else:
                 print("Can Only Reallocate to Room with Purpose as Current Room")
                 return "Choose Appropriate Room Type"
@@ -181,6 +238,7 @@ class Amity(object):
                 self.add_person(params[0], params[1], params[2], params[3])
             print("People Successfully Loaded")
             return "People Successfully Loaded"
+
         except FileNotFoundError:
             print("File not found in the path specified")
             return "File not found"
@@ -260,41 +318,46 @@ class Amity(object):
                              Purpose=room.purpose, Occupants=people)
                 session.add(room)
             session.commit()
+
         except:
             print("Error Saving to Database")
 
     def load_state(self, database_name):
         """ method to load data from database into the app """
         # Load room data
-        for room_name, purpose, occupants in session.query(Rooms.Name, Rooms.Purpose, Rooms.Occupants):
-            individuals = occupants.split("  ")
-            individuals.remove("")
-            if purpose == "office":
-                room = Office(room_name)
-                for individual in individuals:
-                    person = Person(individual)
-                    room.occupants.append(person)
-                self.offices.append(room)
-                self.rooms.append(room)
-            elif purpose == "living_space":
-                room = LivingSpace(room_name)
-                for individual in individuals:
-                    person = Person(individual)
-                    room.occupants.append(person)
-                self.living_spaces.append(room)
-                self.rooms.append(room)
+        try:
+            for room_name, purpose, occupants in session.query(Rooms.Name, Rooms.Purpose, Rooms.Occupants):
+                individuals = occupants.split("  ")
+                if purpose == "office":
+                    room = Office(room_name)
+                    for individual in individuals:
+                        person = Person(individual)
+                        room.occupants.append(person)
+                    self.offices.append(room)
+                    self.rooms.append(room)
+                elif purpose == "living_space":
+                    room = LivingSpace(room_name)
+                    for individual in individuals:
+                        person = Person(individual)
+                        room.occupants.append(person)
+                    self.living_spaces.append(room)
+                    self.rooms.append(room)
 
         # Load People data
-        for person_name, role, wants_accomodation, rooms_allocated in session.query(People.Name, People.Role, People.Accomodation, People.RoomAllocated):
-            if role == "FELLOW":
-                person = Fellow(person_name)
-                if rooms_allocated:
-                    self.allocated.append(person)
+            for person_name, role, wants_accomodation, rooms_allocated in session.query(People.Name, People.Role, People.Accomodation, People.RoomAllocated):
+                if role == "FELLOW":
+                    person = Fellow(person_name)
+                    if rooms_allocated:
+                        self.allocated.append(person)
+                    else:
+                        self.unallocated.append(person)
                 else:
-                    self.unallocated.append(person)
-            else:
-                person = Staff(person_name)
-                if rooms_allocated:
-                    self.allocated.append(person)
-                else:
-                    self.unallocated.append(person)
+                    person = Staff(person_name)
+                    if rooms_allocated:
+                        self.allocated.append(person)
+                    else:
+                        self.unallocated.append(person)
+            print("Data Successfully Loaded to App")
+
+        except:
+            print("Invalid database name")
