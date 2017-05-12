@@ -1,10 +1,11 @@
-
+from abc import ABCMeta
 """ Person model """
 # Class Person
 
 
 class Person(object):
     # Default constructor.
+    __metaclass__ = ABCMeta
 
     def __init__(self, person_name, person_id=None,
                  role=None, wants_accomodation=None):
@@ -19,12 +20,12 @@ class Person(object):
 
 class Fellow(Person):
     def __init__(self, person_name, person_id=None,
-                 role="FELLOW", wants_accomodation="Y"):
+                 role="FELLOW", wants_accomodation=""):
         Person.__init__(self, person_name, person_id, wants_accomodation)
         self.person_name = person_name
         self.person_id = person_id
         self.role = "FELLOW"
-        self.wants_accomodation = "Y"
+        self.wants_accomodation = wants_accomodation
 
 
 """Model for Staff"""

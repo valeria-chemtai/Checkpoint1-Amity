@@ -23,7 +23,7 @@ class People(Base):
 class Rooms(Base):
     __tablename__ = "Amity Rooms"
     Name = Column(String(250), primary_key=True, nullable=False)
-    room_id = Column(Integer, primary_key=True, autoincrement=True)
+    room_id = Column(Integer, autoincrement=True)
     Purpose = Column(String(250), nullable=False)
     Occupants = Column(String(250), nullable=True)
 

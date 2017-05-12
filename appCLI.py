@@ -5,11 +5,12 @@ Usage:
     amity add_person <first_name> <last_name> (Fellow | Staff) [--wants_accomodation=(Y | N)]
     amity print_allocations [-output=<filename>]
     amity reallocate_person <first_name> <last_name> <room_name>
+    amity allocate_unallocated <first_name> <second_name>
     amity print_room <room_name>
     amity print_unallocated [-output=<filename>]
     amity load_people <filename>
     amity save_state [--database=<sqlite_database>]
-    amity load_state
+    amity load_state <database_name>
     amity (-i | --interactive)
     amity (-h | --help | --version)
 
@@ -17,7 +18,6 @@ Options:
     -i, --interactive  Interactive Mode
     -h, --help  Show this screen and exit.
     -a, --wants_accomodation=<opt>  Person wants accomodation [default: N]
-    -d, --database=<sqlite_database>  Saves state to database [default: Amity_database.db]
 """
 
 import sys
@@ -116,6 +116,15 @@ class AmitySystem(cmd.Cmd):
         amity.reallocate_person(first_name, second_name, room_name)
 
     @docopt_cmd
+    def do_allocate_unallocated(self, args):
+        """Usage: allocate_unallocated <first_name> <second_name>"""
+
+        first_name = args["<first_name>"]
+        second_name = args["<second_name>"]
+
+        amity.allocate_unallocated(first_name, second_name)
+
+    @docopt_cmd
     def do_load_people(self, args):
         """Usage: load_people <filename>"""
 
@@ -169,12 +178,11 @@ class AmitySystem(cmd.Cmd):
     @docopt_cmd
     def do_load_state(self, args):
         """
-        Usage: load_state [--load=<database>]
+        Usage: load_state <database_name>
 
-        Options:
-        -l, --load=<database>  Load data from specified database [default: Amity_database.db]
         """
-        amity.load_state(args["--load"])
+        database_name = args["<database_name>"]
+        amity.load_state(database_name)
 
     def do_clear(self, arg):
         """Clears screen"""
