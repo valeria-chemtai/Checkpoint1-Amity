@@ -4,7 +4,7 @@ Usage:
     amity create_room (<room_name> <room_type>)...
     amity add_person <first_name> <last_name> (Fellow | Staff) [--wants_accomodation=(Y | N)]
     amity print_allocations [-output=<filename>]
-    amity reallocate_person <first_name> <last_name> <room_name>
+    amity reallocate_person <first_name> <second_name> <room_name>
     amity allocate_unallocated <first_name> <second_name>
     amity print_room <room_name>
     amity print_unallocated [-output=<filename>]
