@@ -1,5 +1,5 @@
 """Room model"""
-
+from abc import ABCMeta, abstractmethod
 # class Room
 
 
