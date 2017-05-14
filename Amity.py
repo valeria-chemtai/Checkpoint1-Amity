@@ -3,18 +3,15 @@ the Models Views Controller concept i.e. MVC"""
 import os
 import random
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, update
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 from Models.person import Person, Fellow, Staff
 from Models.room import Room, Office, LivingSpace
-from Models.database import People, Rooms
+from Models.database import People, Rooms, engine, Base
 
 """Initiate link to database for storage and retrival of data"""
-engine = create_engine("sqlite:///Amity_database.db")
-Base = declarative_base()
-Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
@@ -71,11 +68,11 @@ class Amity(object):
 
             else:
                 if role.upper() == "FELLOW" and wants_accomodation == "N":
-                    person = Fellow(person_name, wants_accomodation)
+                    person = Fellow(person_name)
                     self.allocate_office(person)
                     return "Fellow Added"
                 elif role.upper() == "FELLOW" and wants_accomodation == "Y":
-                    person = Fellow(person_name, wants_accomodation)
+                    person = Fellow(person_name)
                     self.allocate_office(person)
                     self.allocate_living_space(person)
                     return "Fellow Added and LIvingSpace Allocated"
@@ -200,67 +197,76 @@ class Amity(object):
 
     def reallocate_person(self, first_name, second_name, room_name):
         """ method to reallocate a person to another room """
-        person_name = first_name.upper() + " " + second_name.upper()
-        allocated = [allocated for allocated in self.allocated if
-                     person_name.upper() == allocated.person_name.upper()]
-        unallocated = [unallocated for unallocated in self.unallocated if
-                       person_name.upper() == unallocated.person_name.upper()]
-        room = [room for room in self.rooms if room_name.upper() ==
-                room.room_name.upper()]
-        person = allocated
-        if not person:
-            print("Add {} to Amity first".format(person_name))
-            return "Add {} to Amity first".format(person_name)
+        try:
+            person_name = first_name.upper() + " " + second_name.upper()
+            allocated = [allocated for allocated in self.allocated if
+                         person_name.upper() == allocated.person_name.upper()]
+            unallocated = [unallocated for unallocated in self.unallocated if
+                           person_name.upper() == unallocated.person_name.upper()]
+            room = [room for room in self.rooms if room_name.upper() ==
+                    room.room_name.upper()]
+            person = allocated
+            if not person:
+                print("Add {} to Amity first".format(person_name))
+                return "Add {} to Amity first".format(person_name)
 
-        elif not room:
-            print("{} is not a room in Amity".format(room_name))
-            return "{} is not a room in Amity".format(room_name)
+            elif not room:
+                print("{} is not a room in Amity".format(room_name))
+                return "{} is not a room in Amity".format(room_name)
 
-        elif [occupant for occupant in room[0].occupants
-                if person_name == occupant.person_name]:
-            print("{} is already in {}".format(person_name, room[0].room_name))
-            return "{} is already in {}".format(person_name, room[0].room_name)
+            elif [occupant for occupant in room[0].occupants
+                  if person_name == occupant.person_name]:
+                print("{} is already in {}".format(
+                    person_name, room[0].room_name))
+                return "{} is already in {}".format(person_name, room[0].room_name)
 
-        elif (room[0].purpose == "office" and len(room[0].occupants) == 6):
-            print("{} is full.".format(room[0].room_name))
-            return"Room is Full"
+            elif (room[0].purpose == "office" and len(room[0].occupants) == 6):
+                print("{} is full.".format(room[0].room_name))
+                return "Room is Full"
 
-        elif (room[0].purpose == "living_space" and
-              len(room[0].occupants) == 4):
-            print("{} is full.".format(room[0].room_name))
-            return"Room is Full"
-
-        else:
-            old_room = [room for room in self.rooms if person[
-                0] in room.occupants]
-            if old_room[0].purpose == room[0].purpose:
-                room[0].occupants.append(person[0])
-                old_room[0].occupants.remove(person[0])
-                person[0].old_room = room[0].room_name
-                print("{} was moved from {} to {}".format(
-                    person[0].person_name, old_room[0].room_name,
-                    room[0].room_name))
-                return "Reallocated Successfully"
+            elif (room[0].purpose == "living_space" and
+                  len(room[0].occupants) == 4):
+                print("{} is full.".format(room[0].room_name))
+                return"Room is Full"
 
             else:
-                print("Can Only Reallocate to Room with Purpose as Current Room")
-                return "Choose Appropriate Room Type"
+                old_room = [room for room in self.rooms if person[
+                    0] in room.occupants]
+                if old_room[0].purpose == room[0].purpose:
+                    room[0].occupants.append(person[0])
+                    old_room[0].occupants.remove(person[0])
+                    person[0].old_room = room[0].room_name
+                    print("{} was moved from {} to {}".format(
+                        person[0].person_name, old_room[0].room_name,
+                        room[0].room_name))
+                    return "Reallocated Successfully"
+
+                else:
+                    print("Can Only Reallocate to Room with Purpose as Current Room")
+                    return "Choose Appropriate Room Type"
+        except:
+            print("Error Occured, Try Later")
 
     def load_people(self, filename):
         """ method to add people to rooms from a text file """
 
         try:
-            with open(filename, 'r') as f:
-                people = f.readlines()
-            for person in people:
-                params = person.split() + ["N"]
-                self.add_person(params[0], params[1], params[2], params[3])
-            print("People Successfully Loaded")
-            return "People Successfully Loaded"
+            if filename:
+                try:
+                    with open(filename, 'r') as f:
+                        people = f.readlines()
+                    for person in people:
+                        params = person.split() + ["N"]
+                        self.add_person(params[0], params[1], params[2], params[3])
+                    print("People Successfully Loaded")
+                    return "People Successfully Loaded"
 
+                except IndexError:
+                    print("Data not consistent")
+                    return "Data not consistent"
         except FileNotFoundError:
-            print("File not found in the path specified")
-            return "File not found"
+            print("File Not Found")
+            return "File Not Found"
 
     def print_allocations(self, filename):
         """ method to print a list of allocations on screen
@@ -277,6 +283,7 @@ class Amity(object):
                     output += occupant.person_name + ", "
                 output += ("\n\n")
         print(output)
+        return "Allocations Printed"
 
         if filename:
             with open(filename, 'w') as f:
@@ -299,6 +306,7 @@ class Amity(object):
                 person_name = person.person_name
                 print(person_name)
             print("----" * 10)
+            return "Unallocated Displayed"
         if filename:
             with open(filename, 'w') as f:
                 f.write(person_name)
@@ -322,29 +330,38 @@ class Amity(object):
             print("{} does not exist in Amity".format(room_name.upper()))
             return "Room does not exist"
 
-    def save_state(self, database_name):
+    def save_state(self, database_name="Amity_database"):
         """ method to save all data in the app into SQLite database """
+
         try:
+            for table in Base.metadata.sorted_tables:
+                session.execute(table.delete())
+                session.commit()
             for person in self.allocated + self.unallocated:
                 rooms_allocated = " "
                 for room in self.rooms:
                     if person in room.occupants:
-                        rooms_allocated = room.room_name + "  "
+                        rooms_allocated += room.room_name + "  "
                 person = People(Name=person.person_name, Role=person.role,
-                                Accomodation=person.wants_accomodation,
                                 RoomAllocated=rooms_allocated)
                 session.add(person)
+
             for room in self.rooms:
                 people = " "
                 for occupant in room.occupants:
                     people += occupant.person_name + "  "
                 room = Rooms(Name=room.room_name,
                              Purpose=room.purpose, Occupants=people)
+
                 session.add(room)
             session.commit()
+            print("Data Saved Successfully")
+            return "Data Saved"
 
         except:
-            print("Error Saving to Database")
+            session.rollback()
+
+            print("Error Saving to DB")
 
     def load_state(self, database_name):
         """ method to load data from database into the app """
@@ -352,6 +369,7 @@ class Amity(object):
         try:
             for room_name, purpose, occupants in session.query(Rooms.Name, Rooms.Purpose, Rooms.Occupants):
                 individuals = occupants.split("  ")
+                individuals.remove("")
                 if purpose == "office":
                     room = Office(room_name)
                     for individual in individuals:
@@ -368,20 +386,23 @@ class Amity(object):
                     self.rooms.append(room)
 
         # Load People data
-            for person_name, role, wants_accomodation, rooms_allocated in session.query(People.Name, People.Role, People.Accomodation, People.RoomAllocated):
+            for person_name, role, rooms_allocated in session.query(People.Name, People.Role, People.RoomAllocated):
                 if role == "FELLOW":
                     person = Fellow(person_name)
-                    if rooms_allocated:
+                    if len(rooms_allocated) > 1:
                         self.allocated.append(person)
                     else:
                         self.unallocated.append(person)
                 else:
                     person = Staff(person_name)
-                    if rooms_allocated:
+                    if len(rooms_allocated) > 1:
                         self.allocated.append(person)
                     else:
                         self.unallocated.append(person)
+
             print("Data Successfully Loaded to App")
+            return "Data Successfully Loaded to App"
 
         except:
             print("Invalid database name")
+            return "Invalid Database Name"
