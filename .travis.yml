@@ -5,8 +5,11 @@ install:
   - pip install -r requirements.txt
 env:
   - DB=sqlite
+branches:
+  only:
+    - develop
 
-script: nosetests --with-coverage
+script: nosetests --with-coverage -v --cover-package=models
 
 after_success:
   - coveralls
