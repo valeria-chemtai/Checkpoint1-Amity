@@ -55,6 +55,14 @@ class TestAmity(TestCase):
     self.assertEqual(self.amity.add_person("ANGIE", "SULE", "STAFF", "N"),
                      "{} Exists in Amity.".format("ANGIE SULE"))
 
+  def test_add_staff_with_accomodation_yes(self):
+    """Test that staff who wants accomodation is not given
+    and correct feedback given to user"""
+    self.amity.create_room("Accra", "OFFICE")
+    self.amity.create_room("Unono", "LIVINGSPACE")
+    self.assertEqual(self.amity.add_person(
+        "ANGIE", "SULE", "STAFF", "Y"), "Staff Added and Allocated Office Only")
+
   def test_valid_person_name(self):
     """Test valid person name"""
     self.assertEqual(self.amity.add_person(123, 123, "STAFF", "N"),
@@ -153,6 +161,14 @@ class TestAmity(TestCase):
     self.amity.create_room("Unono", "livingspace")
     self.assertEqual(self.amity.print_unallocated(self),
                      "Unallocated Displayed")
+
+  def test_print_unallocated_with_no_members_unallocated(self):
+    """Test for printing unallocated with no members in unallocated"""
+    self.amity.create_room("Accra", "OFFICE")
+    self.amity.add_person("Rose", "Wambui", "STAFF", "N")
+    self.amity.add_person("Valeria", "Chemtai", "fellow", "N")
+    self.assertEqual(self.amity.print_unallocated(self),
+                     "No Member in Unallocated")
 
   def test_unallocated_staff_and_fellow_allocated_available_office(self):
     """Test staff and fellow who wants only office in unallocated list allocated office"""

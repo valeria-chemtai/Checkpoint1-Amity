@@ -1,12 +1,10 @@
 """Class Amity is the controller of the app using
 the Models Views Controller concept i.e. MVC"""
-import os
 import random
-
 from sqlalchemy.orm import sessionmaker
 
 from Models.person import Person, Fellow, Staff
-from Models.room import Room, Office, LivingSpace
+from Models.room import Office, LivingSpace
 from Models.database import People, Rooms, Base, engine
 
 """Initiate link to database for storage and retrival of data"""
@@ -83,9 +81,6 @@ class Amity(object):
                     self.allocate_office(person)
                     print("Staff Added and Allocated Office Only")
                     return "Staff Added and Allocated Office Only"
-                else:
-                    print("{} is not a valid room type.".format(role))
-
         else:
             print("Invalid Person Name")
             return "Invalid Person Name"
@@ -183,10 +178,6 @@ class Amity(object):
                 if room[0].purpose == "office":
                     self.allocate_unallocated_livingspace(person)
                     return "Fellow Now Allocated LivingSpace"
-                elif room[0].purpose == "living_space":
-                    self.allocate_unallocated_office(person)
-                    return "Fellow Now Allocated Office"
-
             else:
                 self.allocate_unallocated_office(person)
                 return "Member Now Allocated Office"
