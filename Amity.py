@@ -9,7 +9,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from Models.person import Person, Fellow, Staff
 from Models.room import Room, Office, LivingSpace
-from Models.database import People, Rooms, engine, Base
+from Models.database import People, Rooms, Base, engine
 
 """Initiate link to database for storage and retrival of data"""
 DBSession = sessionmaker(bind=engine)
@@ -330,7 +330,7 @@ class Amity(object):
             print("{} does not exist in Amity".format(room_name.upper()))
             return "Room does not exist"
 
-    def save_state(self, database_name="Amity_database"):
+    def save_state(self, database_name="Amity_database.db"):
         """ method to save all data in the app into SQLite database """
 
         try:

@@ -1,9 +1,9 @@
 """Room model"""
-from abc import ABCMeta, abstractmethod
-# class Room
+from abc import ABCMeta
 
 
 class Room(object):
+    __metaclass__ = ABCMeta
 
     def __init__(self, room_name=" ", room_id=None,
                  purpose=None, max_capacity=None, occupants=[]):
@@ -12,9 +12,6 @@ class Room(object):
         self.purpose = purpose
         self.max_capacity = max_capacity
         self.occupants = []
-
-
-# class office a subclass of Room
 
 
 class Office(Room):
@@ -28,9 +25,6 @@ class Office(Room):
         self.purpose = "office"
         self.occupants = []
         self.max_capacity = 6
-
-
-# class LivingSpace a subclass of Room
 
 
 class LivingSpace(Room):

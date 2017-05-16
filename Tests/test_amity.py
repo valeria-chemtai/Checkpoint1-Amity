@@ -8,8 +8,6 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 from Amity import Amity
-from Models.person import Person, Fellow, Staff
-from Models.room import Room, Office, LivingSpace
 
 
 class TestAmity(TestCase):
