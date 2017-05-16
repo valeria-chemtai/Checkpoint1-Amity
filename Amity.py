@@ -3,9 +3,7 @@ the Models Views Controller concept i.e. MVC"""
 import os
 import random
 
-from sqlalchemy import create_engine, update
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 
 from Models.person import Person, Fellow, Staff
 from Models.room import Room, Office, LivingSpace

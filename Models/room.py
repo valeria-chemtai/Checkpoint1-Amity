@@ -15,7 +15,6 @@ class Room(object):
 
 
 class Office(Room):
-
     def __init__(self, room_name=" ", room_id=None,
                  purpose="office", occupants=[], max_capacity=6):
         Room.__init__(self, room_name, room_id, purpose,
@@ -28,7 +27,6 @@ class Office(Room):
 
 
 class LivingSpace(Room):
-
     def __init__(self, room_name=" ", room_id=None,
                  purpose="living_space", occupants=[], max_capacity=4):
         Room.__init__(self, room_name, room_id, purpose,
