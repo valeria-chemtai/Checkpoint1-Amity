@@ -7,7 +7,7 @@ from Models.person import Person, Fellow, Staff
 from Models.room import Office, LivingSpace
 from Models.database import People, Rooms, Base, engine
 
-"""Initiate link to database for storage and retrival of data"""
+# Initiate link to database for storage and retrival of data
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
@@ -92,7 +92,7 @@ class Amity(object):
             if self.offices:
                 room = [room for room in self.offices if len(
                     room.occupants) < 6]
-                office = random.choice(room)
+                office = random.SystemRandom().choice(room)
                 office.occupants.append(person)
                 self.allocated.append(person)
                 print("{} allocated office {}".format(person.person_name,
@@ -113,7 +113,7 @@ class Amity(object):
             if self.living_spaces:
                 room = [room for room in self.living_spaces if len(
                     room.occupants) < 4]
-                living = random.choice(room)
+                living = random.SystemRandom().choice(room)
                 living.occupants.append(person)
                 print("and allocated livingspace {}".format(living.room_name))
             else:
@@ -131,7 +131,7 @@ class Amity(object):
             if self.offices:
                 room = [room for room in self.offices if len(
                     room.occupants) < 6]
-                office = random.choice(room)
+                office = random.SystemRandom().choice(room)
                 office.occupants.append(person[0])
                 self.allocated.append(person[0])
                 self.unallocated.remove(person[0])
@@ -149,7 +149,7 @@ class Amity(object):
             if self.living_spaces:
                 room = [room for room in self.living_spaces if len(
                     room.occupants) < 6]
-                living = random.choice(room)
+                living = random.SystemRandom().choice(room)
                 living.occupants.append(person[0])
                 self.allocated.append(person[0])
                 self.unallocated.remove(person[0])
@@ -190,8 +190,6 @@ class Amity(object):
             person_name = first_name.upper() + " " + second_name.upper()
             allocated = [allocated for allocated in self.allocated if
                          person_name.upper() == allocated.person_name.upper()]
-            unallocated = [unallocated for unallocated in self.unallocated if
-                           person_name.upper() == unallocated.person_name.upper()]
             room = [room for room in self.rooms if room_name.upper() ==
                     room.room_name.upper()]
             person = allocated
@@ -207,7 +205,8 @@ class Amity(object):
                   if person_name == occupant.person_name]:
                 print("{} is already in {}".format(
                     person_name, room[0].room_name))
-                return "{} is already in {}".format(person_name, room[0].room_name)
+                return "{} is already in {}".format(person_name,
+                                                    room[0].room_name)
 
             elif (room[0].purpose == "office" and len(room[0].occupants) == 6):
                 print("{} is full.".format(room[0].room_name))
@@ -233,7 +232,7 @@ class Amity(object):
                 else:
                     print("Can Only Reallocate to Room with Purpose as Current Room")
                     return "Choose Appropriate Room Type"
-        except:
+        except Exception as e:
             print("Error Occured, Try Later")
 
     def load_people(self, filename):
@@ -246,7 +245,8 @@ class Amity(object):
                         people = f.readlines()
                     for person in people:
                         params = person.split() + ["N"]
-                        self.add_person(params[0], params[1], params[2], params[3])
+                        self.add_person(params[0], params[
+                                        1], params[2], params[3])
                     print("People Successfully Loaded")
                     return "People Successfully Loaded"
 
@@ -279,7 +279,6 @@ class Amity(object):
                 f.write(output)
             print("Allocations Printed to {}".format(filename))
             return "Allocations Printed to {}".format(filename)
-        return "Successfully Printed Allocations"
 
     def print_unallocated(self, filename):
         """ method to print a list of unallocated people in screen
