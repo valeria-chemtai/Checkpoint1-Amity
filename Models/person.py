@@ -1,31 +1,32 @@
-""" Person model """
-# Class Person
+from abc import ABCMeta
 
 
 class Person(object):
-    # Default constructor.
-    def __init__(self, name=None, person_id=None, role=None, wants_accomodation=None):
-        self.name = name
-        self.id = id
+    __metaclass__ = ABCMeta
+
+    def __init__(self, person_name, person_id=None,
+                 role=None, wants_accomodation=None):
+        self.person_name = person_name
+        self.id = person_id
         self.role = role
         self.wants_accomodation = wants_accomodation
 
 
-"""Model for Fellow"""
-
-
 class Fellow(Person):
-
-    def add_person():
-        # Prompt for Fellow details
-        new_fellow = ((input("Enter Firstname Secondname role wants_accomodation separated by space  ")))
-        return new_fellow
-
-
-"""Model for Staff"""
+    def __init__(self, person_name, person_id=None,
+                 role="FELLOW", wants_accomodation=""):
+        Person.__init__(self, person_name, person_id, wants_accomodation)
+        self.person_name = person_name
+        self.person_id = person_id
+        self.role = "FELLOW"
+        self.wants_accomodation = wants_accomodation
 
 
 class Staff(Person):
-    def add_person(self):
-        new_staff = ((input("Enter Firstname Secondname role separated by space  ")))
-        return new_staff
+    def __init__(self, person_name, person_id=None,
+                 role="STAFF", wants_accomodation="N"):
+        Person.__init__(self, person_name, person_id, wants_accomodation)
+        self.person_name = person_name
+        self.person_id = person_id
+        self.role = "STAFF"
+        self.wants_accomodation = "N"
