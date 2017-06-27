@@ -28,24 +28,23 @@ class Amity(object):
                     if room_name.upper() == room.room_name.upper()]:
                 print("{} Exists in Amity.".format(room_name.upper()))
                 return "{} Exists in Amity.".format(room_name.upper())
-            else:
-                if purpose == "OFFICE" or purpose == "office":
-                    room = Office(room_name.upper())
-                    self.offices.append(room)
-                    self.rooms.append(room)
-                    print("{} {} created".format(room.room_name, room.purpose))
-                    return "Room Created"
-                elif purpose == "LIVINGSPACE" or purpose == "livingspace":
-                    room = LivingSpace(room_name.upper())
-                    self.living_spaces.append(room)
-                    self.rooms.append(room)
-                    print("{} {} created".format(room.room_name, room.purpose))
-                    return "Room Created"
-                else:
-                    print("{} is not a valid room type.".format(purpose))
-        else:
-            print("Invalid Room Name")
-            return "Invalid Room Name"
+            if purpose == "OFFICE" or purpose == "office":
+                room = Office(room_name.upper())
+                self.offices.append(room)
+                self.rooms.append(room)
+                print("{} {} created".format(room.room_name, room.purpose))
+                return "Room Created"
+            elif purpose == "LIVINGSPACE" or purpose == "livingspace":
+                room = LivingSpace(room_name.upper())
+                self.living_spaces.append(room)
+                self.rooms.append(room)
+                print("{} {} created".format(room.room_name, room.purpose))
+                return "Room Created"
+
+            print("{} is not a valid room type.".format(purpose))
+
+        print("Invalid Room Name")
+        return "Invalid Room Name"
 
     def add_person(self, first_name, second_name, role, wants_accomodation):
         """ method for adding a fellow/staff to amity database """
@@ -62,28 +61,27 @@ class Amity(object):
                 print("{} Exists in Amity.".format(person_name))
                 return "{} Exists in Amity.".format(person_name)
 
-            else:
-                if role.upper() == "FELLOW" and wants_accomodation == "N":
-                    person = Fellow(person_name)
-                    self.allocate_office(person)
-                    return "Fellow Added"
-                elif role.upper() == "FELLOW" and wants_accomodation == "Y":
-                    person = Fellow(person_name)
-                    self.allocate_office(person)
-                    self.allocate_living_space(person)
-                    return "Fellow Added and LIvingSpace Allocated"
-                elif role.upper() == "STAFF" and wants_accomodation == "N":
-                    person = Staff(person_name)
-                    self.allocate_office(person)
-                    return "Staff Added"
-                elif role.upper() == "STAFF" and wants_accomodation == "Y":
-                    person = Staff(person_name)
-                    self.allocate_office(person)
-                    print("Staff Added and Allocated Office Only")
-                    return "Staff Added and Allocated Office Only"
-        else:
-            print("Invalid Person Name")
-            return "Invalid Person Name"
+            if role.upper() == "FELLOW" and wants_accomodation == "N":
+                person = Fellow(person_name)
+                self.allocate_office(person)
+                return "Fellow Added"
+            elif role.upper() == "FELLOW" and wants_accomodation == "Y":
+                person = Fellow(person_name)
+                self.allocate_office(person)
+                self.allocate_living_space(person)
+                return "Fellow Added and LIvingSpace Allocated"
+            elif role.upper() == "STAFF" and wants_accomodation == "N":
+                person = Staff(person_name)
+                self.allocate_office(person)
+                return "Staff Added"
+            elif role.upper() == "STAFF" and wants_accomodation == "Y":
+                person = Staff(person_name)
+                self.allocate_office(person)
+                print("Staff Added and Allocated Office Only")
+                return "Staff Added and Allocated Office Only"
+
+        print("Invalid Person Name")
+        return "Invalid Person Name"
 
     def allocate_office(self, person):
         """allocate_office is a method used for allocation of
@@ -300,7 +298,6 @@ class Amity(object):
                 f.write(person_name)
             print("Data Saved to Text File")
             return "Data Saved to Text File"
-        return "Unallocated Printed"
 
     def print_room(self, room_name):
         """ method to print room and all people allocated to that room."""
