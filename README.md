@@ -1,6 +1,7 @@
 # AMITY
 [![Build Status](https://travis-ci.org/valeria-chemtai/Checkpoint1-Amity.svg?branch=master)](https://travis-ci.org/valeria-chemtai/Checkpoint1-Amity)
 [![Coverage Status](https://coveralls.io/repos/github/valeria-chemtai/Checkpoint1-Amity/badge.svg?branch=master)](https://coveralls.io/github/valeria-chemtai/Checkpoint1-Amity?branch=master)
+
 Amity is an app used to register and allocate rooms randomly to Andelans. Each Andelan must be assigned an office and only Fellows are legible to be allocated living spaces.
 **Installation**
 Clone the repository
