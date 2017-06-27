@@ -141,9 +141,9 @@ class TestAmity(TestCase):
     self.amity.create_room("Accra", "OFFICE")
     self.amity.add_person("Rose", "Wambui", "STAFF", "N")
     self.assertEqual(self.amity.print_allocations(
-        "data.txt"), "Allocations Printed to data.txt")
+        "data.txt"), "Allocations Printed")
 
-  def test_print_allocations_to_file(self):
+  def test_print_allocations_on_screen(self):
     """Test that Allocations Printed successfully"""
     self.amity.create_room("Accra", "OFFICE")
     self.amity.add_person("Rose", "Wambui", "STAFF", "N")
